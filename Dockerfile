@@ -2,10 +2,16 @@ FROM selenium/standalone-chrome:latest
 
 USER root
 
-RUN mkdir -p /home/seluser/.local/share/undetected_chromedriver/undetected && \
-    cp /usr/bin/chromedriver /home/seluser/.local/share/undetected_chromedriver/undetected/chromedriver_PATCHED && \
-    chmod +x /home/seluser/.local/share/undetected_chromedriver/undetected/chromedriver_PATCHED && \
-    chown -R seluser:seluser /home/seluser/.local
+RUN CHROME_VER=$(google-chrome --version | grep -oP 'd+.d+.d+.d+' | head -1) && \
+    echo "Chrome: $CHROME_VER" && \
+    wget -q "https://storage.googleapis.com/chrome-for-testing-public/$CHROME_VER/linux64/chromedriver-linux64.zip" -O /tmp/cd.zip && \
+    unzip /tmp/cd.zip -d /tmp/cd && \
+    UC_DIR="/home/seluser/.local/share/undetected_chromedriver/undetected" && \
+    mkdir -p $UC_DIR && \
+    cp /tmp/cd/chromedriver-linux64/chromedriver "$UC_DIR/chromedriver_PATCHED" && \
+    chmod +x "$UC_DIR/chromedriver_PATCHED" && \
+    chown -R seluser:seluser /home/seluser/.local && \
+    rm -rf /tmp/cd /tmp/cd.zip
 
 USER seluser
 
