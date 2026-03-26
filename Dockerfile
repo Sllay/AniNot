@@ -9,9 +9,9 @@ RUN CHROME_VER=$(google-chrome --version | grep -oP 'd+' | head -1) && \
 
 USER seluser
 
-COPY . /home/seluser/app
+COPY requirements.txt /home/seluser/app/requirements.txt
 WORKDIR /home/seluser/app
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "anipy_server.main:app", "--host", "0.0.0.0", "--port", "8000"]
