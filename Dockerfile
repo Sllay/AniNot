@@ -2,14 +2,16 @@ FROM selenium/standalone-chrome:latest
 
 USER root
 
-RUN wget -q "https://storage.googleapis.com/chrome-for-testing-public/145.0.7632.116/linux64/chromedriver-linux64.zip" -O /tmp/cd.zip && \
-    unzip /tmp/cd.zip -d /tmp/cd && \
-    UC_DIR="/home/seluser/.local/share/undetected_chromedriver/undetected" && \
-    mkdir -p $UC_DIR && \
-    cp /tmp/cd/chromedriver-linux64/chromedriver "$UC_DIR/chromedriver_PATCHED" && \
-    chmod +x "$UC_DIR/chromedriver_PATCHED" && \
-    chown -R seluser:seluser /home/seluser/.local && \
-    rm -rf /tmp/cd /tmp/cd.zip
+RUN apt-get update -qq && \
+    VER=$(curl -sf https://googlechromelabs.github.io/chrome-for-testing/LATEST_RELEASE_147) && \
+    echo "Instalando Chrome $VER" && \
+    wget -q "https://storage.googleapis.com/chrome-for-testing-public/${VER}/linux64/chrome-linux64.zip" -O /tmp/chrome.zip && \
+    unzip -q /tmp/chrome.zip -d /tmp/ && \
+    cp /tmp/chrome-linux64/chrome /usr/bin/google-chrome && \
+    chmod +x /usr/bin/google-chrome && \
+    rm -rf /tmp/chrome.zip /tmp/chrome-linux64 && \
+    mkdir -p /home/seluser/.local/share/undetected_chromedriver/undetected && \
+    chown -R seluser:seluser /home/seluser/.local
 
 USER seluser
 
