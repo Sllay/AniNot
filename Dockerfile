@@ -2,14 +2,15 @@ FROM selenium/standalone-chrome:latest
 
 USER root
 
-RUN apt-get update -qq && \
-    VER=$(curl -sf https://googlechromelabs.github.io/chrome-for-testing/LATEST_RELEASE_147) && \
-    echo "Instalando Chrome $VER" && \
-    wget -q "https://storage.googleapis.com/chrome-for-testing-public/${VER}/linux64/chrome-linux64.zip" -O /tmp/chrome.zip && \
-    unzip -q /tmp/chrome.zip -d /tmp/ && \
-    cp /tmp/chrome-linux64/chrome /usr/bin/google-chrome && \
-    chmod +x /usr/bin/google-chrome && \
-    rm -rf /tmp/chrome.zip /tmp/chrome-linux64 && \
+RUN apt-get update -qq && apt-get install -y curl wget unzip && \
+    CHROME_VER=$(curl -sf "https://googlechromelabs.github.io/chrome-for-testing/LATEST_RELEASE_147") && \
+    echo "Instalando Chrome $CHROME_VER" && \
+    wget -q "https://storage.googleapis.com/chrome-for-testing-public/${CHROME_VER}/linux64/chrome-linux64.zip" -O /tmp/chrome.zip && \
+    unzip -q /tmp/chrome.zip -d /opt/ && \
+    mv /opt/chrome-linux64 /opt/chrome147 && \
+    chmod +x /opt/chrome147/chrome && \
+    ln -sf /opt/chrome147/chrome /usr/bin/google-chrome && \
+    rm /tmp/chrome.zip && \
     mkdir -p /home/seluser/.local/share/undetected_chromedriver/undetected && \
     chown -R seluser:seluser /home/seluser/.local
 
