@@ -13,17 +13,14 @@ RUN apt-get update -qq && apt-get install -y curl wget unzip && \
     mkdir -p /home/seluser/.local/share/undetected_chromedriver/undetected && \
     chown -R seluser:seluser /home/seluser/.local
 
+COPY patch.py /tmp/patch.py
+
 USER seluser
 
 COPY requirements.txt /home/seluser/app/requirements.txt
 WORKDIR /home/seluser/app
 
 RUN pip install --no-cache-dir -r requirements.txt && \
-    MAIN_PY=$(find /home/seluser/venv -name "main.py" -path "*/anipy_server/*") && \
-    sed -i 's/options.add_argument("--no-sandbox")/options.add_argument("--no-sandbox")
-        options.add_argument("--dns-prefetch-disable")
-        options.add_argument("--host-resolver-rules=MAP * ~NOTFOUND, EXCLUDE animepahe.ru")
-        options.binary_location = "/opt/chrome147/chrome"/' $MAIN_PY && \
-    echo "Patch aplicado"
+    python3 /tmp/patch.py
 
 CMD ["uvicorn", "anipy_server.main:app", "--host", "0.0.0.0", "--port", "8000"]
