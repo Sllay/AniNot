@@ -2,10 +2,10 @@ FROM selenium/standalone-chrome:latest
 
 USER root
 
-RUN CHROME_VER=$(google-chrome --version | grep -oP 'd+' | head -1) && \
-    UC_DIR="/home/seluser/.local/share/undetected_chromedriver" && \
-    mkdir -p $UC_DIR && \
-    ln -sf /usr/bin/chromedriver "$UC_DIR/chromedriver_PATCHED"
+RUN mkdir -p /home/seluser/.local/share/undetected_chromedriver/undetected && \
+    cp /usr/bin/chromedriver /home/seluser/.local/share/undetected_chromedriver/undetected/chromedriver_PATCHED && \
+    chmod +x /home/seluser/.local/share/undetected_chromedriver/undetected/chromedriver_PATCHED && \
+    chown -R seluser:seluser /home/seluser/.local
 
 USER seluser
 
