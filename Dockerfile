@@ -2,9 +2,7 @@ FROM selenium/standalone-chrome:latest
 
 USER root
 
-RUN CHROME_VER=$(google-chrome --version | grep -oP 'd+.d+.d+.d+' | head -1) && \
-    echo "Chrome: $CHROME_VER" && \
-    wget -q "https://storage.googleapis.com/chrome-for-testing-public/$CHROME_VER/linux64/chromedriver-linux64.zip" -O /tmp/cd.zip && \
+RUN wget -q "https://storage.googleapis.com/chrome-for-testing-public/145.0.7632.116/linux64/chromedriver-linux64.zip" -O /tmp/cd.zip && \
     unzip /tmp/cd.zip -d /tmp/cd && \
     UC_DIR="/home/seluser/.local/share/undetected_chromedriver/undetected" && \
     mkdir -p $UC_DIR && \
