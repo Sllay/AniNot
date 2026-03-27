@@ -1,26 +1,17 @@
-FROM selenium/standalone-chrome:latest
+FROM ultrafunk/undetected-chromedriver
 
 USER root
 
-RUN apt-get update -qq && apt-get install -y curl wget unzip && \
-    CHROME_VER=$(curl -sf "https://googlechromelabs.github.io/chrome-for-testing/LATEST_RELEASE_147") && \
-    wget -q "https://storage.googleapis.com/chrome-for-testing-public/${CHROME_VER}/linux64/chrome-linux64.zip" -O /tmp/chrome.zip && \
-    unzip -q /tmp/chrome.zip -d /opt/ && \
-    mv /opt/chrome-linux64 /opt/chrome147 && \
-    mv /opt/chrome147/chrome /opt/chrome147/chrome-bin && \
-    echo '#!/bin/sh' > /opt/chrome147/chrome && \
-    echo 'exec /opt/chrome147/chrome-bin --disable-dev-shm-usage --disable-gpu --no-sandbox "$@"' >> /opt/chrome147/chrome && \
-    chmod +x /opt/chrome147/chrome && \
-    ln -sf /opt/chrome147/chrome /usr/bin/google-chrome && \
-    rm /tmp/chrome.zip && \
+RUN apt-get update -qq && apt-get install -y python3 python3-pip python3-venv && \
     mkdir -p /home/seluser/.local/share/undetected_chromedriver/undetected && \
-    chown -R seluser:seluser /home/seluser/.local
+    chmod -R 777 /home/seluser/.local
 
-USER seluser
+WORKDIR /app
 
-COPY requirements.txt /home/seluser/app/requirements.txt
-WORKDIR /home/seluser/app
+COPY requirements.txt .
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --break-system-packages -r requirements.txt
+
+ENV PYTHONUNBUFFERED=1
 
 CMD ["uvicorn", "anipy_server.main:app", "--host", "0.0.0.0", "--port", "8000"]
