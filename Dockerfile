@@ -15,3 +15,4 @@ RUN chmod +x /start.sh
 ENV PYTHONUNBUFFERED=1
 
 CMD ["/start.sh"]
+# cache bust Fri Mar 27 22:25:28 -03 2026
